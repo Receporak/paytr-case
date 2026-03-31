@@ -6,9 +6,10 @@ En düşük komisyonlu POS'u seçen REST API servisi. Harici bir kaynaktan POS k
 
 ## Teknolojiler
 
+
 | Teknoloji               | Versiyon |
 | ----------------------- | -------- |
-| PHP                     | 8.3      |
+| PHP                     | 8.4      |
 | Laravel                 | 13.x     |
 | PostgreSQL              | 16       |
 | Redis                   | 7        |
