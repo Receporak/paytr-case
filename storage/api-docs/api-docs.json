@@ -1,0 +1,225 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "PayTR Case API",
+        "description": "POS komisyon oranı sorgulama ve senkronizasyon API'si",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "Local Server"
+        }
+    ],
+    "paths": {
+        "/api/v1/pos/select": {
+            "post": {
+                "tags": [
+                    "POS"
+                ],
+                "summary": "En düşük komisyonlu POS'u seç",
+                "description": "Verilen para birimi, kart tipi ve taksit sayısına göre en uygun (en düşük komisyonlu) POS'u döner.",
+                "operationId": "posSelect",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "currency",
+                                    "card_type",
+                                    "installment"
+                                ],
+                                "properties": {
+                                    "currency": {
+                                        "description": "Para birimi",
+                                        "type": "string",
+                                        "example": "TRY",
+                                        "enum": [
+                                            "TRY",
+                                            "USD",
+                                            "EUR"
+                                        ]
+                                    },
+                                    "card_type": {
+                                        "description": "Kart tipi",
+                                        "type": "string",
+                                        "example": "credit",
+                                        "enum": [
+                                            "credit",
+                                            "debit",
+                                            "unknown"
+                                        ]
+                                    },
+                                    "installment": {
+                                        "description": "Taksit sayısı",
+                                        "type": "integer",
+                                        "example": 3,
+                                        "minimum": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "En düşük komisyonlu POS başarıyla bulundu",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Success"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "filters": {
+                                                    "properties": {
+                                                        "installment": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "currency": {
+                                                            "type": "string",
+                                                            "example": "TRY"
+                                                        },
+                                                        "card_type": {
+                                                            "type": "string",
+                                                            "example": "credit"
+                                                        },
+                                                        "card_brand": {
+                                                            "type": "string",
+                                                            "example": "visa"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "overall_min": {
+                                                    "properties": {
+                                                        "pos_name": {
+                                                            "type": "string",
+                                                            "example": "Garanti"
+                                                        },
+                                                        "card_type": {
+                                                            "type": "string",
+                                                            "example": "credit"
+                                                        },
+                                                        "card_brand": {
+                                                            "type": "string",
+                                                            "example": "visa"
+                                                        },
+                                                        "installment": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "currency": {
+                                                            "type": "string",
+                                                            "example": "TRY"
+                                                        },
+                                                        "commission_rate": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 1.75
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validasyon hatası",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The currency field is required."
+                                        },
+                                        "data": {
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 400
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pos/rates-sync": {
+            "post": {
+                "tags": [
+                    "POS"
+                ],
+                "summary": "POS komisyon oranlarını senkronize et",
+                "description": "Harici API'den POS komisyon oranlarını çekme işlemini kuyruğa alır.",
+                "operationId": "posRatesSync",
+                "responses": {
+                    "200": {
+                        "description": "Senkronizasyon kuyruğa alındı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Success"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "Senkronizasyon kuyruğa alındı"
+                                        },
+                                        "code": {
+                                            "type": "integer",
+                                            "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "POS",
+            "description": "POS işlemleri"
+        }
+    ]
+}
